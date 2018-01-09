@@ -29,22 +29,38 @@
     <div class="background">
       <img :src="seller.avatar" width="100%">
     </div>
-    <div v-show="detailShow" class="detail">
+    <transition name="fade">
+      <div v-show="detailShow" class="detail">
       <div class="detail-wrapper clearfix">
         <div class="detail-main">
           <h1 class="name">{{seller.name}}</h1>
-          <star :size="48" :score="seller.score"></star>
+          <div class="star-wrapper">
+            <star :size="48" :score="seller.score"></star>
+          </div>
+          <v-title :title="'优惠信息'"></v-title>
+          <ul v-if="seller.supports" class="support">
+            <li class="support-item" v-for="(item, index) in seller.supports" :key="index">
+              <span class="icon" :class="classMap[item.type]"></span>
+              <span class="text">{{item.description}}</span>
+            </li>
+          </ul>
+          <v-title :title="'商家公告'"></v-title>
+          <div class="bulletin">
+            <p class="content">{{seller.bulletin}}</p>
+          </div>
         </div>
       </div>
-      <div class="detail-close">
-          <i class="icon-close"></i>
-        </div>
+      <div class="detail-close" @click="showDetail">
+        <i class="icon-close"></i>
+      </div>
     </div>
+    </transition>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import star from '../star/star.vue';
+  import title from '../title/title.vue';
   export default {
     props : {
       seller: {
@@ -66,7 +82,8 @@
       }
     },
     components: {
-      'star': star
+      'star': star,
+      'v-title': title
     }
   }
 </script>
@@ -76,8 +93,8 @@
 
   .header {
     position: relative;
-    overflow: hidden;
     color: #fff;
+    overflow: hidden;
     background: rgba(7, 17, 27, 0.5);
     .content-wrapper {
       position: relative;
@@ -100,7 +117,7 @@
             vertical-align: top;
             width: 30px;
             height: 18px;
-            .bg-image('brand');
+            .bg-image('image/brand');
             background-size: 30px 18px;
             background-repeat: no-repeat;
           }
@@ -126,19 +143,19 @@
             background-size: 12px 12px;
             background-repeat: no-repeat;
             &.decrease {
-              .bg-image('decrease_1')
+              .bg-image('image/decrease_1')
             }
             &.discount {
-              .bg-image('discount_1')
+              .bg-image('image/discount_1')
             }
             &.guarantee {
-              .bg-image('guarantee_1')
+              .bg-image('image/guarantee_1')
             }
             &.invoice {
-              .bg-image('invoice_1')
+              .bg-image('image/invoice_1')
             }
             &.special {
-              .bg-image('special_1')
+              .bg-image('image/special_1')
             }
           }
           .text {
@@ -183,7 +200,7 @@
         vertical-align: top;
         width: 22px;
         height: 12px;
-        .bg-image('bulletin');
+        .bg-image('image/bulletin');
         background-size: 22px 12px;
         background-repeat: no-repeat;
       }
@@ -201,7 +218,7 @@
     }
     .background {
       position: absolute;
-      top: 0;
+      top: 40px;
       left: 0;
       width: 100%;
       height: 100%;
@@ -217,6 +234,13 @@
       height: 100%;
       overflow: auto;
       background: rgba(7, 17, 27, 0.8);
+      -webkit-backdrop-filter: blur(10px);
+      &.fade-enter-active, &.fade-leave-active {
+        transition: all 1s;
+      }
+      &.fade-enter, &.fade-leave-active {
+        opacity: 0;  
+      }  
       .detail-wrapper {
         width: 100%;
         min-height: 100%;
@@ -228,6 +252,64 @@
             text-align: center;
             font-size: 16px;
             font-weight: 700;
+          }
+          .star-wrapper {
+            margin-top: 18px;
+            padding: 2px 0;
+            text-align: center;
+          }
+          .support {
+            width: 80%;
+            margin: 0 auto;
+            .support-item {
+              padding: 0 12px;
+              margin-bottom: 12px;
+              font-size: 0;
+              &:last-child {
+                margin-bottom: 0;
+              }
+              .icon {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                vertical-align: top;
+                margin-right: 6px;
+                background-size: 16px 16px;
+                background-repeat: no-repeat;
+                &:last-child {
+                  margin-bottom: 0;
+                }
+                background-repeat: no-repeat;
+                &.decrease {
+                  .bg-image('image/decrease_2')
+                }
+                &.discount {
+                  .bg-image('image/discount_2')
+                }
+                &.guarantee {
+                  .bg-image('image/guarantee_2')
+                }
+                &.invoice {
+                  .bg-image('image/invoice_2')
+                }
+                &.special {
+                  .bg-image('image/special_2')
+                }
+              }
+              .text {
+                line-height: 16px;
+                font-size: 12px;
+              }
+            }
+          }
+          .bulletin {
+            width: 80%;
+            margin: 0 auto;
+            .content {
+              padding: 0 12px;
+              line-height: 24px;
+              font-size: 12px;
+            }
           }
         }
       }
