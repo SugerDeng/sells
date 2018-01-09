@@ -1,5 +1,5 @@
 <template>
-  <div class="title">
+  <div class="detailTitle">
     <div class="line"></div>
     <div class="text">{{title}}</div>
     <div class="line"></div>
@@ -17,7 +17,7 @@
 </script>
 
 <style lang="less">
-    .title {
+    .detailTitle {
             display: flex;
             width: 80%;
             margin: 28px auto 24px auto;

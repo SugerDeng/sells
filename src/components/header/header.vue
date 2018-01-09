@@ -60,7 +60,7 @@
 
 <script type="text/ecmascript-6">
   import star from '../star/star.vue';
-  import title from '../title/title.vue';
+  import myTitle from '../title/title.vue';
   export default {
     props : {
       seller: {
@@ -68,7 +68,7 @@
       }
     },
     created () {
-      this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
+      this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
     },
     data() {
       return {
@@ -83,7 +83,7 @@
     },
     components: {
       'star': star,
-      'v-title': title
+      'v-title': myTitle
     }
   }
 </script>
@@ -134,30 +134,7 @@
           font-size: 12px;
         }
         .support {
-          .icon {
-            display: inline-block;
-            vertical-align: top;
-            width: 12px;
-            height: 12px;
-            margin-right: 4px;
-            background-size: 12px 12px;
-            background-repeat: no-repeat;
-            &.decrease {
-              .bg-image('image/decrease_1')
-            }
-            &.discount {
-              .bg-image('image/discount_1')
-            }
-            &.guarantee {
-              .bg-image('image/guarantee_1')
-            }
-            &.invoice {
-              .bg-image('image/invoice_1')
-            }
-            &.special {
-              .bg-image('image/special_1')
-            }
-          }
+          
           .text {
             line-height: 12px;
             font-size: 10px;
