@@ -17,6 +17,13 @@
             </div>
         </div>
     </div>
+    <div class="ball-container">
+        <transition-group @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" name="drop">
+            <div v-for="(ball, index) in balls" :key="index" class="ball" v-show="ball.show">
+                <div class="inner inner-hook"></div>
+            </div>
+        </transition-group>
+    </div>
   </div>
 </template>
 
@@ -34,6 +41,28 @@
         },
         minPrice: {
             type: Number
+        }
+    },
+    data() {
+        return {
+            balls: [
+                {
+                    show: false
+                },
+                {
+                    show: false
+                },
+                {
+                    show: false
+                },
+                {
+                    show: false
+                },
+                {
+                    show: false
+                }
+            ],
+            dropBalls: []
         }
     },
     computed: {
@@ -66,6 +95,53 @@
                 return 'no-enough';
             } else {
                 return 'enough';
+            }
+        }
+    },
+    methods: {
+        drop(el) {
+            for (let i = 0; i < this.balls.length; i++) {
+                let ball = this.balls[i];
+                if (!ball.show) {
+                    ball.show = true;
+                    ball.el = el;
+                    this.dropBalls.push(ball);
+                    return;
+                }
+            }
+        },
+        beforeEnter(el) {
+            let count = this.balls.length;
+            while (count--) {
+                let ball = this.balls[count];
+                if (ball.show) {
+                    let rect = ball.el.getBoundingClientRect();
+                    let x = rect.left - 32;
+                    let y = -(window.innerHeight - rect.top - 22);
+                    el.style.display = '';
+                    el.style.webKitTransform = `translate3d(0, ${y}px, 0)`;
+                    el.style.transform = `translate3d(0, ${y}px, 0)`;
+                    let inner = el.getElementsByClassName('inner-hook')[0];
+                    inner.style.webKitTransform = `translate3d(${x}px, 0, 0)`;
+                    inner.style.transform = `translate3d(${x}px, 0, 0)`;
+                }
+            }
+            console.log(el);
+        },
+        enter(el) {
+            this.$nextTick(() => {
+                el.style.webKitTransform = 'translate3d(0, 0, 0)';
+                el.style.transform = 'translate3d(0, 0, 0)';
+                let inner = el.getElementsByClassName('inner-hook')[0];
+                inner.style.webKitTransform = 'translate3d(0, 0, 0)';
+                inner.style.transform = 'translate3d(0, 0, 0)';
+            });  
+        },
+        afterEnter(el) {
+            let ball = this.dropBalls.shift();
+            if (ball) {
+                ball.show = false;
+                el.style.display = 'none';
             }
         }
     }
@@ -171,6 +247,25 @@
                     &.enough {
                         background: #00b43c;
                         color: #fff;
+                    }
+                }
+            }
+        }
+        .ball-container {
+            background: #000;
+            .ball {
+                position: fixed;
+                left: 32px;
+                bottom: 22px;
+                z-index: 200;
+                &.drop-enter-active {
+                    transition: all .6s cubic-bezier(.53,-0.71,.65,.53);
+                    .inner {
+                        width: 16px;
+                        height: 16px;
+                        border-radius: 50%;
+                        background: rgb(0, 160, 220);
+                        transition: all .6s linear;
                     }
                 }
             }
