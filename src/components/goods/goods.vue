@@ -1,49 +1,52 @@
 <template>
-  <div class="goods">
-    <div class="menu-wrapper" ref="menuWrapper">
-      <ul>
-        <li v-for="(item, index) in goods" :key="index" class="menu-item" :class="{'current': currentIndex === index}" @click="selectMenu(index)">
-          <span class="text border-1px">
-            <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
-          </span>
-        </li>
-      </ul>
+  <div>
+    <div class="goods">
+      <div class="menu-wrapper" ref="menuWrapper">
+        <ul>
+          <li v-for="(item, index) in goods" :key="index" class="menu-item" :class="{'current': currentIndex === index}" @click="selectMenu(index)">
+            <span class="text border-1px">
+              <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
+            </span>
+          </li>
+        </ul>
+      </div>
+      <div class="foods-wrapper" ref="foodsWrapper">
+        <ul>
+          <li class="foods-list food-list-hook" v-for="(item, index) in goods" :key="index">
+            <h1 class="title">{{item.name}}</h1>
+            <ul>
+              <li class="food-item border-1px" v-for="(food, position) in item.foods" :key="position" @click="selectedFood(food)">
+                <div class="icon">
+                  <img width="57" height="57" :src="food.icon">
+                </div>
+                <div class="content">
+                  <h2 class="name">{{food.name}}</h2>
+                  <p class="desc">{{food.description}}</p>
+                  <foodextra :food="food"></foodextra>
+                  <price :food="food"></price>
+                  <div class="cartcontrol-wrapper">
+                    <cartcontrol @cartAdd="_drop" :food="food"></cartcontrol>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <shopcart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
     </div>
-    <div class="foods-wrapper" ref="foodsWrapper">
-      <ul>
-        <li class="foods-list food-list-hook" v-for="(item, index) in goods" :key="index">
-          <h1 class="title">{{item.name}}</h1>
-          <ul>
-            <li class="food-item border-1px" v-for="(food, position) in item.foods" :key="position">
-              <div class="icon">
-                <img width="57" height="57" :src="food.icon">
-              </div>
-              <div class="content">
-                <h2 class="name">{{food.name}}</h2>
-                <p class="desc">{{food.description}}</p>
-                <div class="extra">
-                  <span class="count">月售{{food.sellCount}}</span><span>好评率{{food.rating}}%</span>
-                </div>
-                <div class="price">
-                  <span class="now">￥{{food.price}}</span><span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
-                </div>
-                <div class="cartcontrol-wrapper">
-                  <cartcontrol @cartAdd="_drop" :food="food"></cartcontrol>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <shopcart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+    <food @cartAdd="_drop" :food="selectFood" ref="food"></food>
   </div>
+
 </template>
 
 <script type="text/ecmascript-6">
   import BScroll from 'better-scroll';
   import shopcart from '../shopcart/shopcart.vue';
   import cartcontrol from '../cartcontrol/cartcontrol.vue';
+  import food from '../food/food.vue';
+  import price from '../price/price.vue';
+  import foodextra from '../foodextra/foodextra.vue';
 
   const ERR_OK = 0;
 
@@ -52,7 +55,8 @@
       return {
         goods: [],
         listHeight: [],
-        scrollY: 0
+        scrollY: 0,
+        selectFood: {}
       }
     },
     props: {
@@ -126,11 +130,18 @@
       },
       _drop(target) {
         this.$refs.shopcart.drop(target);
+      },
+      selectedFood(food) {
+        this.selectFood = food;
+        this.$refs.food.show();
       }
     },
     components: {
       shopcart,
-      cartcontrol
+      cartcontrol,
+      food,
+      price,
+      foodextra
     }
   }
 </script>
@@ -230,32 +241,11 @@
             font-size: 14px;
             color: rgb(7, 17, 27);
           }
-          .desc, .extra {
+          .desc {
             font-size: 10px;
             color: rgb(147, 153, 159);
-          }
-          .desc {
             margin-bottom: 8px;
             line-height: 12px;
-          }
-          .extra {
-            .count {
-              margin-right: 12px;
-            }
-          }
-          .price {
-            font-weight: 700;
-            line-height: 24px;
-            .now {
-              margin-right: 8px;
-              font-size: 14px;
-              color: rgb(240, 20, 20);
-            }
-            .old {
-              text-decoration: line-through;
-              font-size: 10px;
-              color: rgb(147, 153, 159);
-            }
           }
           .cartcontrol-wrapper {
             position: absolute;
